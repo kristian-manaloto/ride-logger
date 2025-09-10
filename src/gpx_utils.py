@@ -23,6 +23,16 @@ def parse_file(path: str):
      
     return points
 
+def points_to_dataframe(points):
+    df = pd.DataFrame({
+    'timestamp': [p.time for p in points],
+    'latitude': [p.latitude for p in points],
+    'longitude': [p.longitude for p in points]
+    })
+
+    df = df.sort_values('timestamp').reset_index(drop=True)
+
+
 
 def get_ride_times(points):
     """

@@ -1,7 +1,7 @@
 from gpx_utils import *
 import pandas as pd
 from speed import findSpeed
-
+from display import show_fig
 
 points = parse_file("data/08-09-2025.gpx")
 
@@ -17,9 +17,11 @@ df = pd.DataFrame({
 
 df = df.sort_values('timestamp').reset_index(drop=True)
 
-df = findSpeed(df,time_interval_sec=30)
+speed = findSpeed(df,time_interval_sec=30)
 
 speeds = df['cspeed'].tolist()
 valid_speeds = [s for s in speeds if s is not None]  
 
 print("Max speed:", max(valid_speeds), "km/h")
+
+show_fig(df)
