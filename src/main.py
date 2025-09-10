@@ -17,8 +17,9 @@ df = pd.DataFrame({
 
 df = df.sort_values('timestamp').reset_index(drop=True)
 
-df = findSpeed(df,time_interval=5)
+df = findSpeed(df,time_interval_sec=30)
 
 speeds = df['cspeed'].tolist()
+valid_speeds = [s for s in speeds if s is not None]  
 
-print("max speed using guys code is ", max(speeds), "kmph")
+print("Max speed:", max(valid_speeds), "km/h")

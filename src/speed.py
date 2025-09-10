@@ -36,7 +36,7 @@ def getTimeOffsets(df, timestamp_col='timestamp'):
     timeOffsets = (df[timestamp_col] - df[timestamp_col].shift()).fillna(pd.Timedelta(seconds=0))
     return timeOffsets.dt.total_seconds().astype(int)
 
-def findSpeed(df, time_interval = 5):    
+def findSpeed(df, time_interval_sec = 5):    
     computeDistance(df)
     df['offset'] = getTimeOffsets(df)
     df['dspan'] = df['tspan'] = df['cspeed'] = df['diff'] = None
@@ -45,7 +45,7 @@ def findSpeed(df, time_interval = 5):
         if N == 0: continue
         backi = N
         totOffset = df.at[N,'offset']
-        while totOffset <= time_interval*60 :
+        while totOffset <= time_interval_sec :
             backi -= 1
             totOffset += df.at[backi,'offset']
             if backi == 0: break
@@ -59,8 +59,8 @@ def findSpeed(df, time_interval = 5):
         else:
             speed = round(distance / tspan.seconds * 3600,2)
             df.at[N, 'cspeed'] = speed
-        speed_diff = round(df.at[N,'speed'] - speed, 2)
-        df.at[N,'diff'] = speed_diff
+        #speed_diff = round(df.at[N,'speed'] - speed, 2)
+        #df.at[N,'diff'] = speed_diff
 
     return df
 
