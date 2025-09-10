@@ -69,12 +69,22 @@ def display_time(start,end,duration):
 
 
 def get_max_speed(points):
-    
+    return 0
 
+from math import radians, cos, sin, asin, sqrt
 
-if __name__ == "__main__":
-    points = parse_file('data/08-09-2025.gpx')
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance in kilometers between two points 
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 
-    start,end,duration = get_ride_times(points)
-
-    display_time(start,end,duration)
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371000 # Radius of earth in meters
+    return c * r
