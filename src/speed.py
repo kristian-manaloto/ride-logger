@@ -64,3 +64,20 @@ def findSpeed(df, time_interval_sec = 5):
 
     return df
 
+def find_instant_speed(df):
+    df = df.copy()
+    df['inst_speed'] = 0.0  # km/h
+
+    for i in range(1, len(df)):
+        lat1, lon1 = df.at[i-1, 'latitude'], df.at[i-1, 'longitude']
+        lat2, lon2 = df.at[i, 'latitude'], df.at[i, 'longitude']
+        dt = (df.at[i, 'timestamp'] - df.at[i-1, 'timestamp']).total_seconds()
+
+        if dt > 0:
+            # compute distance in km
+            distance = lat_long_dist(lat1, lon1, lat2, lon2)
+            df.at[i, 'inst_speed'] = distance / dt * 3600  # km/h
+
+    return df
+    
+

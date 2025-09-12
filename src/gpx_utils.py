@@ -1,5 +1,6 @@
 from datetime import timedelta
 from tzlocal import get_localzone
+import pandas as pd
 import gpxpy
 
 
@@ -31,6 +32,8 @@ def points_to_dataframe(points):
     })
 
     df = df.sort_values('timestamp').reset_index(drop=True)
+
+    return df
 
 
 
