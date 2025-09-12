@@ -2,6 +2,7 @@ import plotly.graph_objects as go
 
 def show_fig(df):
 
+    #draw the route
     route_trace = go.Scattermapbox(lat=df['latitude'],lon=df['longitude'],
         mode='lines',line=dict(width=3, color='red'),name="Route"
     )
@@ -15,5 +16,8 @@ def show_fig(df):
         ),
         margin={"r":0,"t":0,"l":0,"b":0}
     )
+
+    #mark the stops
+
 
     fig.show()

@@ -17,9 +17,10 @@ def find_stops(df, threshold, min_duration):
         elif not row["stopped"] and in_stop:
             stop_duration = (row["timestamp"] - start_time).total_seconds()
             if stop_duration >= min_duration:
-                stops.append(df.row)
+                stops.append((row['timestamp'],row['latitude'],row['longitude']))
 
-            in_stop = false 
+            in_stop = False 
+    
 
     for frame in stops:
-        print(frame['logitiude'],frame['latitude'])
+       print(frame)
