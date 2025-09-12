@@ -25,6 +25,8 @@ valid_speeds = [s for s in speeds if s is not None]
 
 print("Max speed:", max(valid_speeds), "km/h")
 
-find_stops(df,5,10)
+stops = find_stops(df,5,10)
 
-show_fig(df)
+print(stops)
+
+show_fig(df,stops)

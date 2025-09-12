@@ -24,3 +24,5 @@ def find_stops(df, threshold, min_duration):
 
     for frame in stops:
        print(frame)
+
+    return stops
