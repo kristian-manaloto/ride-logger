@@ -18,7 +18,8 @@ def find_stops(df):
 
     return stops
 
-def cluster_stops(stops, threshold=0.0002):
+def cluster_stops(stops, threshold=0.001):
+
     if not stops:
         return []
 
@@ -29,27 +30,16 @@ def cluster_stops(stops, threshold=0.0002):
         _, lat, lon = stop
         _, prev_lat, prev_lon = current_cluster[-1]
 
-        # If close to previous point, add to current cluster
+        # same cluster if within threshold
         if abs(lat - prev_lat) <= threshold and abs(lon - prev_lon) <= threshold:
             current_cluster.append(stop)
+
         else:
-
-            lats = [s[1] for s in current_cluster]
-            lons = [s[2] for s in current_cluster]
-            start_time = current_cluster[0][0]
-            end_time   = current_cluster[-1][0]
-            mean_lat = sum(lats) / len(lats)
-            mean_lon = sum(lons) / len(lons)
-            clustered.append((start_time, end_time, mean_lat, mean_lon))
-
+            # finalize with the *last* stop in the cluster
+            clustered.append(current_cluster[-1])
             current_cluster = [stop]
 
-    lats = [s[1] for s in current_cluster]
-    lons = [s[2] for s in current_cluster]
-    start_time = current_cluster[0][0]
-    end_time   = current_cluster[-1][0]
-    mean_lat = sum(lats) / len(lats)
-    mean_lon = sum(lons) / len(lons)
-    clustered.append((start_time, end_time, mean_lat, mean_lon))
+    # finalize last cluster
+    clustered.append(current_cluster[-1])
 
     return clustered

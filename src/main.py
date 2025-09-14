@@ -26,4 +26,6 @@ print("Max speed:", max(valid_speeds), "km/h")
 raw_stops = find_stops(df)
 clean_stops = cluster_stops(raw_stops)
 
+print(len(raw_stops),len(clean_stops))
+
 show_fig(df,clean_stops)
