@@ -2,7 +2,7 @@ from gpx_utils import *
 import pandas as pd
 from speed import findSpeed,find_instant_speed
 from display import show_fig
-from stops import find_stops
+from stops import find_stops,cluster_stops
 
 points = parse_file("data/08-09-2025.gpx")
 
@@ -23,6 +23,7 @@ valid_speeds = [s for s in speeds if s is not None]
 
 print("Max speed:", max(valid_speeds), "km/h")
 
-stops = find_stops(df,4,5)
+raw_stops = find_stops(df)
+clean_stops = cluster_stops(raw_stops)
 
-show_fig(df,stops)
+show_fig(df,clean_stops)
