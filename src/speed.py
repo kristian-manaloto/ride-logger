@@ -36,7 +36,19 @@ def getTimeOffsets(df, timestamp_col='timestamp'):
     timeOffsets = (df[timestamp_col] - df[timestamp_col].shift()).fillna(pd.Timedelta(seconds=0))
     return timeOffsets.dt.total_seconds().astype(int)
 
-def findSpeed(df, time_interval_sec = 5):    
+def find_c_speed(df, time_interval_sec = 5):
+    """
+        finds the continous rolling speed over a time interval 
+        in seconds from the datafram data
+
+        args:
+            df: dataframe with the gpx data
+            time_interval_sec: time interval to compute the rolling speed
+        
+        returns:
+            df: dataframe with new col 'cspeed' col added
+    """
+
     computeDistance(df)
     df['offset'] = getTimeOffsets(df)
     df['dspan'] = df['tspan'] = df['cspeed'] = df['diff'] = None
@@ -65,6 +77,12 @@ def findSpeed(df, time_interval_sec = 5):
     return df
 
 def find_instant_speed(df):
+    """
+    takes the dataframe and adds a instant speed col
+    compute instant speed between points using distance over time
+
+    returns the dataframe with the added col
+    """
     df = df.copy()
     df['inst_speed'] = 0.0  # km/h
 
@@ -79,5 +97,30 @@ def find_instant_speed(df):
             df.at[i, 'inst_speed'] = distance / dt * 3600  # km/h
 
     return df
+
+def get_max_speed(df):
+    """
+        Returns all the information needed to display max speed
+
+        args:
+            df: Dataframe with the gpx data
+        returns:
+            tuple: (max_speed,max_latitude,max_longitide)
+                - max_speed (float): max speed gotten from 'cspeed' in km/h
+                - max_lat, max_long: lat and long where the max speed occured
+
+    """
+
+    df_clean = df.dropna(subset=['cspeed'])
+
+    idx = df_clean['cspeed'].idxmax()
+
+    max_speed = df_clean['cspeed'].loc[idx]
+    max_lat = df_clean['latitude'].loc[idx]
+    max_lon = df_clean['longitude'].loc[idx]
+
+    return (max_speed,max_lat,max_lon)
+
+    
     
 

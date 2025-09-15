@@ -25,8 +25,9 @@ def interpolate_route(df, n_points=500):
     return df_interp
 
 
-def show_fig(df,stops):
+def show_fig(df,stops,max_speed_info):
     df_interp = interpolate_route(df,500)
+
     #draw the route
     route_trace = go.Scattermapbox(lat=df['latitude'],lon=df['longitude'],
         mode='lines',line=dict(width=3, color='red'),name="Route"
@@ -45,16 +46,29 @@ def show_fig(df,stops):
         name="Stops"
     )
 
+    #rider
     rider_marker = go.Scattermapbox(
         lat=[df['latitude'].iloc[0]],
         lon=[df['longitude'].iloc[0]],
         mode="markers",
-        marker=dict(size=14, color='green'),
+        marker=dict(size=10, color='green'),
         name="Rider"
     )
 
+    #max speed
+    max_speed = max_speed_info[0]
+    max_speed_lat = max_speed_info[1]
+    max_speed_long = max_speed_info[2]
 
-    fig = go.Figure(data=[route_trace, stop_marker ,rider_marker])
+    max_speed_marker = go.Scattermapbox(
+        lat=[max_speed_lat],
+        lon=[max_speed_long],
+        mode="markers",
+        marker=dict(size=14, color='lime'),
+        name="Max Speed"
+    )
+
+    fig = go.Figure(data=[route_trace, stop_marker ,rider_marker,max_speed_marker])
 
     steps = []
     for i in range(len(df_interp)):
