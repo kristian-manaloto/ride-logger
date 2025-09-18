@@ -25,7 +25,7 @@ def interpolate_route(df, n_points=500):
     return df_interp
 
 
-def show_fig(df,stops,max_speed_info):
+def show_fig(df,stops,max_speed_info,accelerations):
     df_interp = interpolate_route(df,500)
 
     #draw the route
@@ -64,11 +64,30 @@ def show_fig(df,stops,max_speed_info):
         lat=[max_speed_lat],
         lon=[max_speed_long],
         mode="markers",
+        hovertext=max_speed,
         marker=dict(size=14, color='lime'),
         name="Max Speed"
     )
 
-    fig = go.Figure(data=[route_trace, stop_marker ,rider_marker,max_speed_marker])
+    accel_traces = []
+    for accel in accelerations:
+        trace = go.Scattermapbox(
+            lat=[accel['start_lat'], accel['end_lat']],
+            lon=[accel['start_lon'], accel['end_lon']],
+            mode='lines+markers',
+            line=dict(width=4, color='purple'),
+            marker=dict(size=8, color='purple'),
+            name=f"{accel['delta_speed']:.1f} km/h",
+            hovertemplate=(
+                f"Start: {accel['start_speed']:.1f} km/h<br>"
+                f"End: {accel['end_speed']:.1f} km/h<br>"
+                f"Duration: {accel['duration']:.1f}s"
+            )
+        )
+        accel_traces.append(trace)
+
+
+    fig = go.Figure(data=[route_trace, stop_marker ,rider_marker,max_speed_marker] + accel_traces)
 
     steps = []
     for i in range(len(df_interp)):
