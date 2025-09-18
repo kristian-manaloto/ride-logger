@@ -12,25 +12,27 @@ def find_fast_accelerations(df, window_sec=5, min_speed_increase=30.0):
     df = df.dropna(subset=['timestamp', 'cspeed', 'latitude', 'longitude']).reset_index(drop=True)
 
     accelerations = []
+    i = 0
 
-    for i in range(len(df)):
+    while i < len(df):
         t_start = df['timestamp'].iloc[i]
         start_speed = df['cspeed'].iloc[i]
 
-        # skip invalid start speeds
         if pd.isna(start_speed):
-            continue  
+            i += 1
+            continue
 
-
+        # find first point >= window_sec later
         future_points = df[df['timestamp'] >= t_start + pd.Timedelta(seconds=window_sec)]
         if future_points.empty:
-            continue
+            break
         
         j = future_points.index[0]
         end_speed = df['cspeed'].iloc[j]
 
         if pd.isna(end_speed):
-            continue  
+            i += 1
+            continue
 
         delta_speed = end_speed - start_speed
 
@@ -47,5 +49,9 @@ def find_fast_accelerations(df, window_sec=5, min_speed_increase=30.0):
                 "duration": (df['timestamp'].iloc[j] - t_start).total_seconds(),
                 "delta_speed": delta_speed
             })
+            # jump ahead to the end of this acceleration to avoid overlaps
+            i = j
+        else:
+            i += 1
     
     return accelerations
