@@ -74,7 +74,6 @@ def show_fig(df, stops, max_speed_info, accelerations):
                 f"End speed: {accel['end_speed']:.1f} km/h<br>"
                 f"Duration: {accel['duration']:.1f}s<br>"
                 f"Longitudinal G: {accel['longitudinal_g']:.2f}<br>"
-                f"Lateral G: {accel['lateral_g']:.2f}"
             )
         )
         accel_traces.append(trace)
