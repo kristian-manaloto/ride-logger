@@ -25,50 +25,41 @@ def interpolate_route(df, n_points=500):
     return df_interp
 
 
-def show_fig(df,stops,max_speed_info,accelerations):
-    df_interp = interpolate_route(df,500)
+def show_fig(df, stops, max_speed_info, accelerations):
+    df_interp = interpolate_route(df)
 
-    #draw the route
-    route_trace = go.Scattermapbox(lat=df['latitude'],lon=df['longitude'],
-        mode='lines',line=dict(width=3, color='red'),name="Route"
+    # route
+    route_trace = go.Scattermapbox(
+        lat=df['latitude'], lon=df['longitude'],
+        mode='lines', line=dict(width=3, color='red'), name='Route'
     )
 
-    #mark the stops
-    lats = [s[1] for s in stops]
-    lons = [s[2] for s in stops]
-
+    # stops
+    stop_lats = [s[1] for s in stops]
+    stop_lons = [s[2] for s in stops]
     stop_marker = go.Scattermapbox(
-        mode="markers+text",
-        lat = lats,
-        lon = lons,
-        marker=dict(size=10, color='blue'),
-        textposition="top center",
-        name="Stops"
+        lat=stop_lats, lon=stop_lons,
+        mode='markers+text', marker=dict(size=10, color='blue'),
+        textposition='top center', name='Stops'
     )
 
-    #rider
+    # rider
     rider_marker = go.Scattermapbox(
-        lat=[df['latitude'].iloc[0]],
-        lon=[df['longitude'].iloc[0]],
-        mode="markers",
-        marker=dict(size=10, color='green'),
-        name="Rider"
+        lat=[df['latitude'].iloc[0]], lon=[df['longitude'].iloc[0]],
+        mode='markers', marker=dict(size=10, color='green'), name='Rider'
     )
 
-    #max speed
+    # max speed
     max_speed = max_speed_info[0]
     max_speed_lat = max_speed_info[1]
-    max_speed_long = max_speed_info[2]
-
+    max_speed_lon = max_speed_info[2]
     max_speed_marker = go.Scattermapbox(
-        lat=[max_speed_lat],
-        lon=[max_speed_long],
-        mode="markers",
-        hovertext=max_speed,
-        marker=dict(size=14, color='lime'),
-        name="Max Speed"
+        lat=[max_speed_lat], lon=[max_speed_lon],
+        mode='markers', hovertext=f"{max_speed:.1f} km/h",
+        marker=dict(size=14, color='lime'), name='Max Speed'
     )
 
+    # accelerations
     accel_traces = []
     for accel in accelerations:
         trace = go.Scattermapbox(
@@ -79,34 +70,33 @@ def show_fig(df,stops,max_speed_info,accelerations):
             marker=dict(size=8, color='purple'),
             name=f"{accel['delta_speed']:.1f} km/h",
             hovertemplate=(
-                f"Start: {accel['start_speed']:.1f} km/h<br>"
-                f"End: {accel['end_speed']:.1f} km/h<br>"
-                f"Duration: {accel['duration']:.1f}s"
+                f"Start speed: {accel['start_speed']:.1f} km/h<br>"
+                f"End speed: {accel['end_speed']:.1f} km/h<br>"
+                f"Duration: {accel['duration']:.1f}s<br>"
+                f"Longitudinal G: {accel['longitudinal_g']:.2f}<br>"
+                f"Lateral G: {accel['lateral_g']:.2f}"
             )
         )
         accel_traces.append(trace)
 
+    fig = go.Figure(data=[route_trace, stop_marker, rider_marker, max_speed_marker] + accel_traces)
 
-    fig = go.Figure(data=[route_trace, stop_marker ,rider_marker,max_speed_marker] + accel_traces)
-
+    # slider
     steps = []
     for i in range(len(df_interp)):
         step = dict(
             method="restyle",
-            args=[{
-                "lat": [[df_interp['latitude'].iloc[i]]],
-                "lon": [[df_interp['longitude'].iloc[i]]]
-            }, [2]],
+            args=[{"lat": [[df_interp['latitude'].iloc[i]]],
+                   "lon": [[df_interp['longitude'].iloc[i]]]}, [2]],
             label=str(i)
         )
         steps.append(step)
-
     sliders = [dict(active=0, pad={"t": 50}, steps=steps)]
 
     fig.update_layout(
         sliders=sliders,
         mapbox=dict(
-            style="open-street-map",
+            style='open-street-map',
             center=dict(lat=df['latitude'].mean(), lon=df['longitude'].mean()),
             zoom=13
         ),
