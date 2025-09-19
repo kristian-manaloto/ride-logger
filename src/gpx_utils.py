@@ -25,6 +25,9 @@ def parse_file(path: str):
     return points
 
 def points_to_dataframe(points):
+    """
+        takes gps data from points array and puts it into dataframe
+    """
     df = pd.DataFrame({
     'timestamp': [p.time for p in points],
     'latitude': [p.latitude for p in points],

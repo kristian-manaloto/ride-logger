@@ -4,6 +4,16 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 def interpolate_route(df, n_points=500):
+    """
+        interpolate GPS route data to create less points to scrub through
+
+        args:
+            df: with GPX data, lat, long, cspeed
+            n_points: number of evenly spaced points to interpolate along the route
+
+        returns:
+            df_interp: dataframe with interpolated values
+    """
     df = df.copy()
     distances = np.zeros(len(df))
     for i in range(1, len(df)):
