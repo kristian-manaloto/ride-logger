@@ -38,6 +38,10 @@ def interpolate_route(df, n_points=500):
 def show_fig(df, stops, max_speed_info, accelerations):
     df_interp = interpolate_route(df)
 
+    lats = df_interp['latitude'].tolist()
+    lons = df_interp['longitude'].tolist()
+    speeds = df_interp['cspeed'].fillna(0.0).tolist()
+
     # route
     route_trace = go.Scattermapbox(
         lat=df['latitude'], lon=df['longitude'],
@@ -55,7 +59,7 @@ def show_fig(df, stops, max_speed_info, accelerations):
 
     # rider
     rider_marker = go.Scattermapbox(
-        lat=[df['latitude'].iloc[0]], lon=[df['longitude'].iloc[0]],
+        lat=[lats[0]], lon=[lons[0]],
         mode='markers', marker=dict(size=10, color='green'), name='Rider'
     )
 
@@ -88,28 +92,52 @@ def show_fig(df, stops, max_speed_info, accelerations):
         )
         accel_traces.append(trace)
 
-    fig = go.Figure(data=[route_trace, stop_marker, rider_marker, max_speed_marker] + accel_traces)
+    # speed display
+    speed_annotation = dict(
+        text=f"Speed: {speeds[0]:.1f} km/h",
+        x=0, y=1, xref='paper', yref='paper',
+        xanchor='left', yanchor='top',
+        showarrow=False, font=dict(size=16, color='black')
+    )
 
-    # slider
+    # slider to update the rider and speed
+
+    data =[route_trace, stop_marker, rider_marker, max_speed_marker] + accel_traces
+
+    rider_index = 2  # index of rider trace in data list above
     steps = []
     for i in range(len(df_interp)):
-        step = dict(
+        # update rider marker only
+        step_rider = dict(
             method="restyle",
-            args=[{"lat": [[df_interp['latitude'].iloc[i]]],
-                   "lon": [[df_interp['longitude'].iloc[i]]]}, [2]],
+            args=[{"lat": [[lats[i]]], "lon": [[lons[i]]]}, [rider_index]],
             label=str(i)
         )
-        steps.append(step)
-    sliders = [dict(active=0, pad={"t": 50}, steps=steps)]
+        steps.append(step_rider)
 
-    fig.update_layout(
-        sliders=sliders,
-        mapbox=dict(
-            style='open-street-map',
-            center=dict(lat=df['latitude'].mean(), lon=df['longitude'].mean()),
-            zoom=13
-        ),
-        margin=dict(l=0, r=0, t=0, b=0)
+        # update annotation only
+        step_annotation = dict(
+            method="relayout",
+            args=[{"annotations[0].text": f"Speed: {speeds[i]:.1f} km/h"}],
+            label=str(i)
+        )
+        steps.append(step_annotation)
+
+    sliders = [dict(active=0, currentvalue={"prefix": "Point: "}, pad={"t": 50}, steps=steps)]
+
+    # figure
+    fig = go.Figure(
+        data=data,
+        layout=go.Layout(
+            mapbox=dict(
+                style='open-street-map',
+                center=dict(lat=df['latitude'].mean(), lon=df['longitude'].mean()),
+                zoom=13
+            ),
+            annotations=[speed_annotation],
+            sliders=sliders,
+            margin=dict(l=0, r=0, t=0, b=0)
+        )
     )
 
     fig.show()
