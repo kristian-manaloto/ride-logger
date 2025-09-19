@@ -45,7 +45,7 @@ def show_fig(df, stops, max_speed_info, accelerations):
     # route
     route_trace = go.Scattermapbox(
         lat=df['latitude'], lon=df['longitude'],
-        mode='lines', line=dict(width=3, color='red'), name='Route'
+        mode='lines', line=dict(width=3, color='gray'), name='Route'
     )
 
     # stops
@@ -60,7 +60,7 @@ def show_fig(df, stops, max_speed_info, accelerations):
     # rider
     rider_marker = go.Scattermapbox(
         lat=[lats[0]], lon=[lons[0]],
-        mode='markers', marker=dict(size=10, color='green'), name='Rider'
+        mode='markers', marker=dict(size=10, color='red'), name='Rider'
     )
 
     # max speed
@@ -68,9 +68,13 @@ def show_fig(df, stops, max_speed_info, accelerations):
     max_speed_lat = max_speed_info[1]
     max_speed_lon = max_speed_info[2]
     max_speed_marker = go.Scattermapbox(
-        lat=[max_speed_lat], lon=[max_speed_lon],
-        mode='markers', hovertext=f"{max_speed:.1f} km/h",
-        marker=dict(size=14, color='lime'), name='Max Speed'
+        lat=[max_speed_lat],
+        lon=[max_speed_lon],
+        mode='markers',
+        marker=dict(size=14, color='lime'),
+        name='Max Speed',
+        hoverinfo='text',  # only show hover text, not lat/lon
+        hovertext=f"{max_speed:.1f} km/h"
     )
 
     # accelerations
@@ -123,7 +127,16 @@ def show_fig(df, stops, max_speed_info, accelerations):
         )
         steps.append(step_annotation)
 
-    sliders = [dict(active=0, currentvalue={"prefix": "Point: "}, pad={"t": 50}, steps=steps)]
+    #slider
+    sliders = [dict(
+        active=0,
+        pad={"t": 50},
+        steps=[dict(label='', method=step['method'], args=step['args']) for step in steps],  # remove labels
+        currentvalue={"visible": False},  # hide the current value box
+        len=0.9,  # slider length as fraction of the width
+        borderwidth=0,  # remove border
+        bgcolor='lightgray'  # slider background color
+    )]
 
     # figure
     fig = go.Figure(
