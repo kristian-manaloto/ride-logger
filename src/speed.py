@@ -36,7 +36,7 @@ def getTimeOffsets(df, timestamp_col='timestamp'):
     timeOffsets = (df[timestamp_col] - df[timestamp_col].shift()).fillna(pd.Timedelta(seconds=0))
     return timeOffsets.dt.total_seconds().astype(int)
 
-def find_c_speed(df, time_interval_sec = 5):
+def find_c_speed(df, time_interval_sec = 20):
     """
         finds the continous rolling speed over a time interval 
         in seconds from the datafram data
@@ -44,7 +44,7 @@ def find_c_speed(df, time_interval_sec = 5):
         args:
             df: dataframe with the gpx data
             time_interval_sec: time interval to compute the rolling speed
-        
+                    - default 20 sec
         returns:
             df: dataframe with new col 'cspeed' col added
     """

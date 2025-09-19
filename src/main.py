@@ -16,7 +16,7 @@ display_time(start, end, duration)
 df = points_to_dataframe(points)
 
 # continous speed over a time frame provides most accurate speed estimate
-df = find_c_speed(df,time_interval_sec=30)
+df = find_c_speed(df)
 
 # instant velocity provides best way to find stops and accelerations
 df = compute_velocity(df)
