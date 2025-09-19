@@ -10,7 +10,7 @@ def find_stops(df):
 
     df = df.copy()
     
-    zero_speed_rows = df[df["inst_speed"] <= 4]
+    zero_speed_rows = df[df["velocity"] <= 4]
 
     stops = [(row["timestamp"], row["latitude"], row["longitude"]) 
              for _, row in zero_speed_rows.iterrows()]
@@ -19,6 +19,7 @@ def find_stops(df):
     return stops
 
 def cluster_stops(stops, threshold=0.001):
+    
 
     if not stops:
         return []

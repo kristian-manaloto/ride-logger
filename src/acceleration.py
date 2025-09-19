@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import math
 
 # https://physics.stackexchange.com/questions/496046/calculate-acceleration-and-lateral-g-force-from-gps-coordinates
@@ -19,8 +18,10 @@ def gps_to_xy(lat, lon, lat_ref, lon_ref):
     y = (lat_rad - lat_ref_rad) * EARTH_RADIUS
     return x, y
 
-def compute_velocity(df: pd.DataFrame) -> pd.DataFrame:
-    """Compute velocity components and speed from GPS"""
+def compute_velocity(df):
+    """Compute velocity components and speed from GPS data
+       new column ['velocity'] calculated in meters per second     
+    """
     df = df.copy()
     lat_ref, lon_ref = df["latitude"].iloc[0], df["longitude"].iloc[0]
     coords = [gps_to_xy(lat, lon, lat_ref, lon_ref) for lat, lon in zip(df["latitude"], df["longitude"])]
@@ -30,7 +31,7 @@ def compute_velocity(df: pd.DataFrame) -> pd.DataFrame:
 
     df["vx"] = df["x"].diff() / dt
     df["vy"] = df["y"].diff() / dt
-    df["speed"] = (df["vx"]**2 + df["vy"]**2).pow(0.5)
+    df["velocity"] = (df["vx"]**2 + df["vy"]**2).pow(0.5)
     return df
 
 
@@ -44,8 +45,8 @@ def extract_fast_accelerations(df: pd.DataFrame, g_threshold=0.5, min_speed_incr
 
     for i in range(1, len(df)):
 
-        start_speed_m_s = df["speed"].iloc[i-1]
-        end_speed_m_s = df["speed"].iloc[i]
+        start_speed_m_s = df["velocity"].iloc[i-1]
+        end_speed_m_s = df["velocity"].iloc[i]
         duration = (df["timestamp"].iloc[i] - df["timestamp"].iloc[i-1]).total_seconds()
         long_g = (end_speed_m_s - start_speed_m_s) / duration / G if duration > 0 else 0
 
@@ -56,12 +57,12 @@ def extract_fast_accelerations(df: pd.DataFrame, g_threshold=0.5, min_speed_incr
             end_idx = i
             in_accel = False
 
-            start_speed = df["speed"].iloc[start_idx] * 3.6  # m/s → km/h
-            end_speed = df["speed"].iloc[end_idx] * 3.6
+            start_speed = df["velocity"].iloc[start_idx] * 3.6  # m/s → km/h
+            end_speed = df["velocity"].iloc[end_idx] * 3.6
             delta_speed = end_speed - start_speed
             duration_total = (df["timestamp"].iloc[end_idx] - df["timestamp"].iloc[start_idx]).total_seconds()
 
-            avg_long_g = (df["speed"].iloc[end_idx] - df["speed"].iloc[start_idx]) / duration_total / G if duration_total > 0 else 0
+            avg_long_g = (df["velocity"].iloc[end_idx] - df["velocity"].iloc[start_idx]) / duration_total / G if duration_total > 0 else 0
 
             if delta_speed >= min_speed_increase:
                 accelerations.append({
