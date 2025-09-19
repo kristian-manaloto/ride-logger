@@ -19,8 +19,15 @@ def gps_to_xy(lat, lon, lat_ref, lon_ref):
     return x, y
 
 def compute_velocity(df):
-    """Compute velocity components and speed from GPS data
-       new column ['velocity'] calculated in meters per second     
+    """
+        Compute velocity components and speed from GPS data
+        important new column ['velocity'] calculated in meters per second
+
+        args:
+            df: dataframe with gpx data
+
+        returns:
+            df: copy of dataframe with added x,y,vx,vy, and velocity column     
     """
     df = df.copy()
     lat_ref, lon_ref = df["latitude"].iloc[0], df["longitude"].iloc[0]
@@ -35,9 +42,21 @@ def compute_velocity(df):
     return df
 
 
-def extract_fast_accelerations(df: pd.DataFrame, g_threshold=0.5, min_speed_increase=15.0):
+def extract_fast_accelerations(df, g_threshold=0.5, min_speed_increase=25.0):
     """
-    Extract rapid acceleration segments using longitudinal Gs calculated from speed differences.
+    Extract rapid acceleration from the dataframe using the velocity column
+
+    calculates only longitudinal g forces from initial velocity, end velocity and duration
+
+    args:
+        df: containing GPX data
+        g_threshold: minimum longitudinal G force to consider as fact acceleration
+                     default is 0.5 G
+        min_speed_increase: minumum speed difference (km/h) in an acceleration to be 
+                     included in the returned list
+
+    returns: 
+        accelerations: list of dictionaries, each dictionary contains a acceleration segment
     """
     accelerations = []
     in_accel = False

@@ -2,10 +2,12 @@ import pandas as pd
 
 def find_stops(df):
     """
-    Given the dataframe, looks at any period where speed was less than 
-    4kmph, and marks it as a stop
+    looks at any period where speed was less than 4kmph, and marks it as a stop
 
-    returns an array of tuples containing stop information (time, lat, long)
+    args:
+        df: data fram with gpx data
+    returns: 
+        stops: an array of tuples containing stop information (time, lat, long)
     """
 
     df = df.copy()
@@ -19,7 +21,17 @@ def find_stops(df):
     return stops
 
 def cluster_stops(stops, threshold=0.001):
-    
+    """
+    iterate over each stop and combine
+    multiple stop points within a threshold and turns them into a single stop
+
+    args:
+        stops: an array of raw stop points
+        threshold: long and lat degree to combine points by
+
+    returns:
+        clustered: an array of combined stop points
+    """
 
     if not stops:
         return []
