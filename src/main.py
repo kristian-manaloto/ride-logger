@@ -3,9 +3,8 @@ import pandas as pd
 from speed import find_c_speed ,get_max_speed
 from display import show_fig
 from stops import find_stops,cluster_stops
-from acceleration import compute_velocity, extract_fast_accelerations
-
-points = parse_file("data/14-09-2025.gpx")
+from acceleration import *
+points = parse_file("data/17-09-2025.gpx")
 
 #time related things
 start, end = points[0].time, points[-1].time
@@ -20,6 +19,7 @@ df = find_c_speed(df)
 
 # instant velocity provides best way to find stops and accelerations
 df = compute_velocity(df)
+df = smooth_velocity_outliers(df)
 
 
 accelerations = extract_fast_accelerations(df)

@@ -1,5 +1,7 @@
 import pandas as pd
 import math
+import numpy as np
+from scipy import stats
 
 # https://physics.stackexchange.com/questions/496046/calculate-acceleration-and-lateral-g-force-from-gps-coordinates
 # shout out these people
@@ -41,6 +43,31 @@ def compute_velocity(df):
     df["velocity"] = (df["vx"]**2 + df["vy"]**2).pow(0.5)
     return df
 
+def smooth_velocity_outliers(df, velocity_column='velocity', iqr_multiplier=1.5, window_size=3):
+    """
+    Smooth velocity outliers using IQR method by modifying the original velocity column.
+    
+    returns:
+        DataFrame with modified velocity column (outliers smoothed)
+    """
+    df_smooth = df.copy()
+
+    Q1 = df_smooth[velocity_column].quantile(0.25)
+    Q3 = df_smooth[velocity_column].quantile(0.75)
+    IQR = Q3 - Q1
+    
+    lower_bound = Q1 - iqr_multiplier * IQR
+    upper_bound = Q3 + iqr_multiplier * IQR
+    
+    outlier_mask = (df_smooth[velocity_column] < lower_bound) | (df_smooth[velocity_column] > upper_bound)
+    
+    rolling_median = df_smooth[velocity_column].rolling(
+        window=window_size, center=True, min_periods=1
+    ).median()
+    
+    df_smooth.loc[outlier_mask, velocity_column] = rolling_median[outlier_mask]
+    
+    return df_smooth
 
 def extract_fast_accelerations(df, g_threshold=0.5, min_speed_increase=25.0):
     """
