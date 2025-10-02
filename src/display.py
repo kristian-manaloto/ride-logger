@@ -153,4 +153,4 @@ def show_fig(df, stops, max_speed_info, accelerations):
         )
     )
 
-    fig.show()
+    fig.show(renderer="browser")
