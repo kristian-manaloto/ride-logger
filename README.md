@@ -3,7 +3,7 @@
 ## Introduction
 This project logs and visualizes GPS ride telemetry data. It provides insights into speed, acceleration, stops, and other metrics for motorcycle or driving rides. Users can interactively scrub through the ride to see how speed and position change over time. 
 
-This is a MVP for this project, I am planning to create a polished version in the future.
+This is a MVP for this project, the focus was more about figuring how to process the data accurately. I am planning to create a polished version in the future.
 
 ## Description
 - Interpolates GPS route data for smooth visualization.
