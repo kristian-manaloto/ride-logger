@@ -1,4 +1,4 @@
-# Ride Telemetry Logger
+# Route Metrics
 
 ## Introduction
 This project logs and visualizes GPS ride telemetry data. It provides insights into speed, acceleration, stops, and other metrics for motorcycle or driving rides. Users can interactively scrub through the ride to see how speed and position change over time. 
