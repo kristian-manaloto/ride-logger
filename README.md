@@ -21,6 +21,17 @@ This is a MVP for this project, I am planning to create a polished version in th
 
 ## Pictures
 
+### 1. Application Overview
+Displays the main interface of the Ride Telemetry Logger, showing the route, stops, and rider marker.
+![App Screenshot](images/image1.png)
+
+### 2. Acceleration Data
+Hovering over the purple acceleration traces shows detailed information including start/end speeds, duration, and longitudinal G-force.
+![Acceleration Hover](images/image2.png)
+
+### 3. Top Speed Highlight
+The lime marker indicates the maximum speed reached during the ride.
+![Top Speed](images/image3.png)
 
 ## Installation
 
