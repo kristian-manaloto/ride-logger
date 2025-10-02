@@ -1,7 +1,5 @@
-import pandas as pd
 import math
-import numpy as np
-from scipy import stats
+
 
 # https://physics.stackexchange.com/questions/496046/calculate-acceleration-and-lateral-g-force-from-gps-coordinates
 # shout out these people

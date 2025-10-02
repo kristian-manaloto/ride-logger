@@ -1,9 +1,10 @@
 from gpx_utils import *
-import pandas as pd
 from speed import find_c_speed ,get_max_speed
 from display import show_fig
 from stops import find_stops,cluster_stops
 from acceleration import *
+
+
 points = parse_file("data/17-09-2025.gpx")
 
 #time related things

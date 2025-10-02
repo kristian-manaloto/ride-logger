@@ -1,5 +1,3 @@
-from datetime import timedelta
-from tzlocal import get_localzone
 import pandas as pd
 import gpxpy
 
